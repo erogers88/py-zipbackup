@@ -1,39 +1,32 @@
 import zipfile
 import datetime
 import os
+import argparse
 
-LocalSaveDirectory = "C:\\Users\\erik\\Documents\\My Games\\Grim Dawn\\save\\"
-RemoteSaveDirectory = "\\\\RogersShare\\Public\\VideoGames\\Windows_PC\\SaveGames\\Grim_Dawn\\"
-FilePrefix = "GD_Backup_"
-
-def get_all_file_paths(directory): 
-  
+def get_all_file_paths(directory):
     # initializing empty file paths list 
-    FilePaths = [] 
+    file_paths = [] 
   
     # crawling through directory and subdirectories 
     for root, directories, files in os.walk(directory): 
         for filename in files: 
             # join the two strings in order to form the full filepath. 
-            Fullpath = os.path.join(root, filename) 
-            FilePaths.append(Fullpath) 
+            full_path = os.path.join(root, filename) 
+            file_paths.append(full_path) 
   
     # returning all file paths 
-    return FilePaths  
+    return file_paths  
 
-def main():
+def create_backup(local_save_directory, remote_save_directory, file_prefix):
 
-    # get all grim dawn save files
-    GrimDawnSaveFiles = get_all_file_paths(LocalSaveDirectory)
+    # get all files in the input directory
+    all_file_paths = get_all_file_paths(local_save_directory)
 
     # get current datetime and format as string
-    CurrentDateTime = datetime.datetime.now()
-    TimeStamp = '{:%Y-%m-%d_%H-%M-%S}'.format(CurrentDateTime)
+    current_date_time = datetime.datetime.now()
+    time_stamp = '{:%Y-%m-%d_%H-%M-%S}'.format(current_date_time)
 
-    # write timestamped zip file in remote directory with all grim dawn save files
-    with zipfile.ZipFile(RemoteSaveDirectory + FilePrefix + TimeStamp + ".zip", 'w') as zip:
-        for file in GrimDawnSaveFiles:
+    # write timestamped zip file in remote directory with all files
+    with zipfile.ZipFile(remote_save_directory + file_prefix + time_stamp + ".zip", 'w') as zip:
+        for file in all_file_paths:
             zip.write(file)
-
-if __name__ == "__main__": 
-    main() 
